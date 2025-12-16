@@ -39,7 +39,6 @@ typedef struct node {
     }
 } node;
 
-
 // 用來建立樹
 class BST {
   private:
@@ -55,11 +54,22 @@ class BST {
             return;
         }
 
+        status.clear();
+        root = nullptr;
+
         string title;
-        getline(file, title);  // 把第一行讀掉
-        
-        // 先讀整行，再切成13欄
-        // 再轉型
+        getline(file, title);
+
+        stringstream ss(title);
+        vector<string> titles;
+        string temp;
+
+        while (getline(ss, temp, '\t')) {
+            titles.push_back(temp);
+        }
+
+
+        // 先讀整行，再切成13欄，再轉型
         string line;
         Pokemon p; 
         while (getline(file, line)) {
@@ -97,11 +107,10 @@ class BST {
 
         }
 
-        root = nullptr;  // 建樹
+        root = nullptr;  // 建樹用
         for (int i = 0; i < status.size(); i++) {
             root = insertnode(root, status[i].hp, status[i].ID);
         }
-
 
         // 幫忙debug
         // cout << status.size() << endl;
@@ -110,6 +119,10 @@ class BST {
 
         // Print
         int size = status.size(); // status array size
+        cout << titles[0] << "\t"
+             << titles[1] << "\t"
+             << titles[2] << "\t"
+             << titles[5] << "\n";
         for (int i = 0; i < size; i++) {
             cout << status[i].ID << "\t";
             cout << status[i].name << "\t";
@@ -172,6 +185,8 @@ int main () {
     int comm;
     string filenum;
     BST one;
+    int range1;
+    int range2; 
 
     while (1) {
         // cout << "*** (^_^) Data Structure (^o^) ***\n";
@@ -189,6 +204,16 @@ int main () {
             cout << "Input a file number: ";
             cin >> filenum;
             one.ReadFile(filenum);
+            cout << "\n";
+        }
+
+        else if (comm == 2) {
+            cout << "range 1: ";
+            cin >> range1;
+            cout << "\nrange 2: ";
+            cin >> range2;
+
+
         }
     }
 }
