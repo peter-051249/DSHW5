@@ -22,15 +22,29 @@ typedef struct Pokemon {
     bool legend;
 } Pokemon;
 
-typedef struct bstnode {
-    
-} bstnode;
+
+
+typedef struct node {
+    int hp;
+    vector<int> ids;  // 同 hp 的寶可夢編號
+
+    node* left;
+    node* right;
+
+    node(int h, int id) {
+        hp = h;
+        ids.push_back(id);
+        left = nullptr;
+        right = nullptr;
+    }
+} node;
 
 
 // 用來建立樹
 class BST {
   private:
     vector<Pokemon> status;  // 動態陣列，裡面每一個元素都是一個 struct Pokemon
+    node* root;
 
   public:
     // 讀檔案進 vector<Pokemon>
@@ -83,6 +97,12 @@ class BST {
 
         }
 
+        root = nullptr;  // 建樹
+        for (int i = 0; i < status.size(); i++) {
+            root = insertnode(root, status[i].hp, status[i].ID);
+        }
+
+
         // 幫忙debug
         // cout << status.size() << endl;
         // cout << status[6].name << " " << status[6].hp << " " << status[6].type1 << " " << status[6].type2 << status[6].total << endl;
@@ -94,13 +114,54 @@ class BST {
             cout << status[i].ID << "\t";
             cout << status[i].name << "\t";
             cout << status[i].type1 << "\t";
-            if (status[i].type2 == "") {  // type2 沒東西，空出一個欄位給他(但排版看起來怪怪的)
-                cout << "\t";
-            }
+            // if (status[i].type2 == "") {  // type2 沒東西，空出一個欄位給他(但排版看起來怪怪的)
+            //     cout << "\t";
+            // }
             cout << status[i].hp << "\n";
         }
 
+        int height = getHeight(root);
+        cout << "BST height = " << height << endl;
+
     }
+
+    node* insertnode(node* root, int hp, int id) {
+        if (root == nullptr) {
+            return new node(hp, id);  // 建立new noode
+        }
+
+        if (hp < root->hp) {
+            root->left = insertnode(root->left, hp, id);
+        }
+
+        else if (hp > root->hp) {
+            root->right = insertnode(root->right, hp, id);
+        }
+
+        else {  // hp == root->hp
+            root->ids.push_back(id);
+        }
+        return root;
+    }
+
+
+    int getHeight(node* root) {
+        if (root == nullptr) {
+            return 0;
+        }
+
+        int l_height = getHeight(root->left);
+        int r_height = getHeight(root->right);
+        
+
+        if (l_height > r_height) {
+            return l_height + 1;
+        }
+        else {
+            return r_height + 1;
+        }
+    }
+
 };
 
 
@@ -130,6 +191,4 @@ int main () {
             one.ReadFile(filenum);
         }
     }
- 
-
 }
