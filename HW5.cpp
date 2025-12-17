@@ -24,16 +24,16 @@ typedef struct Pokemon {
 
 
 
-typedef struct node {
+typedef struct node {   
     int hp;
-    vector<int> ids;  // 同 hp 的寶可夢編號
+    vector<int> idxs;  // 同 hp 的寶可夢編號
 
     node* left;
     node* right;
 
     node(int h, int id) {
         hp = h;
-        ids.push_back(id);
+        idxs.push_back(id);
         left = nullptr;
         right = nullptr;
     }
@@ -57,6 +57,7 @@ class BST {
         status.clear();
         root = nullptr;
 
+        // 準備title印出的東西
         string title;
         getline(file, title);
 
@@ -109,7 +110,7 @@ class BST {
 
         root = nullptr;  // 建樹用
         for (int i = 0; i < status.size(); i++) {
-            root = insertnode(root, status[i].hp, status[i].ID);
+            root = insertnode(root, status[i].hp, i);
         }
 
         // 幫忙debug
@@ -152,11 +153,10 @@ class BST {
         }
 
         else {  // hp == root->hp
-            root->ids.push_back(id);
+            root->idxs.push_back(id);
         }
         return root;
     }
-
 
     int getHeight(node* root) {
         if (root == nullptr) {
@@ -175,6 +175,79 @@ class BST {
         }
     }
 
+
+    // task2 走訪BST，判斷大小，累計次數，收集結果
+    // 需要在函式裡被修改，修改後外面要看得到 (&)
+    // 指向一個node (*)
+    // result 存所有符合條件的節點指標
+    void Search(node* n, int left, int right, vector<node*>& result, int& count) {
+        if (n == nullptr) {  // 空樹
+            return;
+        }
+
+        count++;
+
+        // 左子樹有可能有值
+        if (n->hp > left) {
+            Search(n->left, left, right, result, count);
+        }
+
+        // 範圍內，存入 result
+        if (n->hp >= left && n->hp <= right) {
+            result.push_back(n);
+        }
+
+        // 右子樹有可能的職
+        if (n->hp < right) {
+            Search(n->right, left, right, result, count);
+        }
+
+    }
+
+    
+    void PrintTask2(vector<node*>& result, int count) {
+        if (result.empty()) {
+            cout << "No record was found in the specified range.\n";
+            cout << "Number of visited nodes = " << count << endl;
+            return;
+        }
+        
+        // 暫時這樣print
+        cout << "#\tID\tName\tType1\tTotal\tHP\tAttack\tDefense\n";
+        
+        int idx = 1;
+        for (int i = result.size() - 1; i >= 0; i--) {
+            node* n = result[i];
+            
+            for (int j = 0; j < n->idxs.size(); j++) {
+                int id = n->idxs[j];
+                
+                const Pokemon& p = status[id];
+                
+                cout << "[" << idx++ << "]" << "\t"
+                << p.ID << "\t"
+                << p.name << "\t"
+                << p.type1 << "\t"
+                << p.total << "\t"
+                << p.hp << "\t"
+                << p.attack << "\t"
+                << p.defence << "\n";
+            }
+        }
+        cout << "Number of visited nodes = " << count << endl;
+    }
+
+    // 幫助從 main 使用到 Search (private -> root)
+    void SearchRange(int left, int right) {
+        vector<node*> result;
+        int count = 0;
+        
+        // 開始找
+        Search(root, left, right, result, count);  // count 出來會是改過內容的 (int& count)
+    
+        // 印出結果
+        PrintTask2(result, count);
+    }
 };
 
 
@@ -183,16 +256,22 @@ class BST {
 
 int main () {
     int comm;
+    bool comm1 = false;
     string filenum;
     BST one;
     int range1;
     int range2; 
 
     while (1) {
-        // cout << "*** (^_^) Data Structure (^o^) ***\n";
-        // cout << "\n";
-
-        cout << "input command number: ";
+        cout << "*** (^_^) Data Structure (^o^) ***\n";
+        cout << "** Binary Search Tree on Pokemon *\n";
+        cout << "* 0. QUIT                        *\n";
+        cout << "* 1. Read a file to build HP BST *\n";
+        cout << "* 2. Range search on HP field    *\n";
+        cout << "* 3. Delete the min on HP field  *\n";
+        cout << "* 4. Rebuild the balanced HP BST *\n";
+        cout << "**********************************\n";
+        cout << "Input a choice(0, 1, 2, 3, 4): ";  
 
         cin >> comm;
 
@@ -201,19 +280,28 @@ int main () {
         }
 
         else if (comm == 1) {
-            cout << "Input a file number: ";
+            cout << "\nInput a file number [0: quit]: ";
             cin >> filenum;
+            if (filenum == "0") {
+                cout << "\n";
+                continue;
+            }
             one.ReadFile(filenum);
             cout << "\n";
+            comm1 = true;
         }
 
         else if (comm == 2) {
-            cout << "range 1: ";
+            if (!comm1) {
+                cout << "\n----- Execute Mission 1 first! -----\n" << endl;
+                continue;
+                // break;
+            }
+            cout << "Input a non-negative integer: ";
             cin >> range1;
-            cout << "\nrange 2: ";
+            cout << "\nInput a non-negative integer: ";
             cin >> range2;
-
-
+            one.SearchRange(range1, range2);
         }
     }
 }
