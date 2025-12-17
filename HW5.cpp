@@ -125,6 +125,7 @@ class BST {
              << titles[2] << "\t"
              << titles[5] << "\n";
         for (int i = 0; i < size; i++) {
+            cout << "[" << i + 1 << "]" << "\t";
             cout << status[i].ID << "\t";
             cout << status[i].name << "\t";
             cout << status[i].type1 << "\t";
@@ -186,11 +187,10 @@ class BST {
         }
 
         else {
-            count++;
-            
+            // count++;
             // 左子樹有可能有值
             if (n->hp > left) {
-                // count++;
+                count++;
                 Search(n->left, left, right, result, count);
             }
 
@@ -202,7 +202,7 @@ class BST {
 
             // 右子樹有可能的職
             if (n->hp < right) {
-                // count++;
+                count++;
                 Search(n->right, left, right, result, count);
             }
 
@@ -214,7 +214,7 @@ class BST {
     void PrintTask2(vector<node*>& result, int count) {
         if (result.empty()) {
             cout << "No record was found in the specified range.\n";
-            cout << "Number of visited nodes = " << count << endl;
+            cout << "Number of visited nodes = " << count << "\n";
             return;
         }
         
@@ -254,6 +254,10 @@ class BST {
         // 印出結果
         PrintTask2(result, count);
     }
+
+
+
+    void Delete() {}
 };
 
 
@@ -301,13 +305,16 @@ int main () {
             if (!comm1) {
                 cout << "\n----- Execute Mission 1 first! -----\n" << endl;
                 continue;
-                // break;
             }
             cout << "Input a non-negative integer: ";
             cin >> range1;
             cout << "\nInput a non-negative integer: ";
             cin >> range2;
             one.SearchRange(range1, range2);
+        }
+
+        else if (comm == 3) {
+
         }
     }
 }
