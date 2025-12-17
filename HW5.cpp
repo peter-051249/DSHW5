@@ -185,21 +185,27 @@ class BST {
             return;
         }
 
-        count++;
+        else {
+            count++;
+            
+            // 左子樹有可能有值
+            if (n->hp > left) {
+                // count++;
+                Search(n->left, left, right, result, count);
+            }
 
-        // 左子樹有可能有值
-        if (n->hp > left) {
-            Search(n->left, left, right, result, count);
-        }
+            // 範圍內，存入 result
+            if (n->hp >= left && n->hp <= right) {
+                result.push_back(n);
+                // count++;
+            }
 
-        // 範圍內，存入 result
-        if (n->hp >= left && n->hp <= right) {
-            result.push_back(n);
-        }
+            // 右子樹有可能的職
+            if (n->hp < right) {
+                // count++;
+                Search(n->right, left, right, result, count);
+            }
 
-        // 右子樹有可能的職
-        if (n->hp < right) {
-            Search(n->right, left, right, result, count);
         }
 
     }
@@ -234,7 +240,7 @@ class BST {
                 << p.defence << "\n";
             }
         }
-        cout << "Number of visited nodes = " << count << endl;
+        cout << "Number of visited nodes = " << count << "\n";
     }
 
     // 幫助從 main 使用到 Search (private -> root)
