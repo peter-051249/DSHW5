@@ -356,20 +356,6 @@ class BST {
     }
 };
 
-
-
-            // for (int idx = 0; idx < deleted->idxs.size(); idx++) {
-            //     cout << status[idx].ID << "\t"
-            //          << status[idx].name << "\t"
-            //          << status[idx].type1 << "\t"
-            //          << status[idx].total << "\t"
-            //          << status[idx].hp << "\t"
-            //          << status[idx].attack << "\t"
-            //          << status[idx].defence << "\t"
-            //          << status[idx].sp_atk << "\t"
-            //          << status[idx].sp_def << endl;
-            // }
-
 int main () {
     int comm;
     bool comm1 = false;
