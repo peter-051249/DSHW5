@@ -187,10 +187,10 @@ class BST {
         }
 
         else {
-            // count++;
+            count++;
             // 左子樹有可能有值
             if (n->hp > left) {
-                count++;
+                // count++;
                 Search(n->left, left, right, result, count);
             }
 
@@ -201,8 +201,8 @@ class BST {
             }
 
             // 右子樹有可能的職
-            if (n->hp < right) {
-                count++;
+            if (n->hp <= right) {  // 原本是n->hp < right
+                //count++;
                 Search(n->right, left, right, result, count);
             }
 
@@ -214,7 +214,7 @@ class BST {
     void PrintTask2(vector<node*>& result, int count) {
         if (result.empty()) {
             cout << "No record was found in the specified range.\n";
-            cout << "Number of visited nodes = " << count << "\n";
+            cout << "Number of visited nodes = " << count << "\n" << endl;
             return;
         }
         
@@ -240,7 +240,7 @@ class BST {
                 << p.defence << "\n";
             }
         }
-        cout << "Number of visited nodes = " << count << "\n";
+        cout << "\nNumber of visited nodes = " << count << "\n" << endl;
     }
 
     // 幫助從 main 使用到 Search (private -> root)
@@ -256,7 +256,7 @@ class BST {
     }
 
 
-
+    // task 3
     void Delete() {}
 };
 
