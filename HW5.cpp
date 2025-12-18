@@ -256,38 +256,37 @@ class BST {
 
 
     // 實際做 task 3 的
-    node* DeleteMin(node* root) {
-        // 先判斷樹是不是空的
+    node* DeleteMin(node* root, node*& deleted) {
         if (root == nullptr) {
+            deleted = nullptr;
             return nullptr;
         }
 
         if (root->left == nullptr) {
-            node* rightChild = root->right;
-            delete root;
-            return rightChild;
+            deleted = root;          // 記住被刪的節點
+            return root->right;      // 不在這裡 delete
         }
-        // 回傳刪掉的
-        root->left = DeleteMin(root->left);
+
+        root->left = DeleteMin(root->left, deleted);
         return root;
     }
 
-    node* DeleteMax(node* root) {
+
+    node* DeleteMax(node* root, node*& deleted) {
         // 先判斷樹是不是空的
         if (root == nullptr) {
+            deleted = nullptr;
             return nullptr;
         }
 
         if (root->right == nullptr) {
-            node* leftChild = root->left;
-            delete root;
-            return leftChild;
+            deleted = root;
+            return root->left;
         }
         // 回傳刪掉的
-        root->right = DeleteMax(root->right);
+        root->right = DeleteMax(root->right, deleted);
         return root;
     }
-
 
     // 用在 main 裡的
     void Delete_min() {
@@ -296,7 +295,31 @@ class BST {
             return;
         }
 
-        root = DeleteMin(root);
+        node* deleted = nullptr;
+        root = DeleteMin(root, deleted);
+
+        if (deleted != nullptr) {
+            cout << "#\tID\tName\tType1\tTotal\tHP\tAttack\tDefense\tSp. Atk\tSp. Def\n";
+            // cout << "Delete HP = " << deleted->hp << endl;  // print the deleted node (for later)
+            for (int i = 0; i < deleted->idxs.size(); i++) {
+                int id = deleted->idxs[i];   // status 的 index
+                const Pokemon& p = status[id]; 
+                cout << p.ID << "\t"
+                    << p.name << "\t"
+                    << p.type1 << "\t"
+                    << p.total << "\t"
+                    << p.hp << "\t"
+                    << p.attack << "\t"
+                    << p.defence << "\t"
+                    << p.sp_atk << "\t"
+                    << p.sp_def << endl;
+            }
+
+            delete deleted;   // 這裡才真的釋放
+        }
+
+        int height = getHeight(root);
+        cout << "HP tree height = " << height << endl;
     }
 
     void Delete_max() {
@@ -305,19 +328,53 @@ class BST {
             return;
         }
 
-        root = DeleteMax(root);
+        node* deleted = nullptr;
+        root = DeleteMax(root, deleted);
+
+        if (deleted != nullptr) {
+            cout << "#\tID\tName\tType1\tTotal\tHP\tAttack\tDefense\tSp. Atk\tSp. Def\n";
+            // cout << "Delete HP = " << deleted->hp << endl;  // print the deleted node (for later)
+            for (int i = 0; i < deleted->idxs.size(); i++) {
+                int id = deleted->idxs[i];   // status 的 index
+                const Pokemon& p = status[id]; 
+                cout << p.ID << "\t"
+                    << p.name << "\t"
+                    << p.type1 << "\t"
+                    << p.total << "\t"
+                    << p.hp << "\t"
+                    << p.attack << "\t"
+                    << p.defence << "\t"
+                    << p.sp_atk << "\t"
+                    << p.sp_def << endl;
+            }
+
+            delete deleted;   // 這裡才真的釋放
+        }
+
+        int height = getHeight(root);
+        cout << "BST height = " << height << endl;
     }
 };
 
 
 
-
+            // for (int idx = 0; idx < deleted->idxs.size(); idx++) {
+            //     cout << status[idx].ID << "\t"
+            //          << status[idx].name << "\t"
+            //          << status[idx].type1 << "\t"
+            //          << status[idx].total << "\t"
+            //          << status[idx].hp << "\t"
+            //          << status[idx].attack << "\t"
+            //          << status[idx].defence << "\t"
+            //          << status[idx].sp_atk << "\t"
+            //          << status[idx].sp_def << endl;
+            // }
 
 int main () {
     int comm;
     bool comm1 = false;
     string filenum;
-    BST one;
+    BST bst; 
     int range1;
     int range2; 
     int count_3 = 0;
@@ -346,7 +403,7 @@ int main () {
                 cout << "\n";
                 continue;
             }
-            one.ReadFile(filenum);
+            bst.ReadFile(filenum);
             cout << "\n";
             comm1 = true;
         }
@@ -360,17 +417,22 @@ int main () {
             cin >> range1;
             cout << "\nInput a non-negative integer: ";
             cin >> range2;
-            one.SearchRange(range1, range2);
+            bst.SearchRange(range1, range2);
         }
 
         else if (comm == 3) {
+            if (!comm1) {
+                cout << "\n----- Execute Mission 1 first! -----\n" << endl;
+                continue;
+            }
+
             count_3++;
             if (count_3 % 2 == 1) {  // 奇數次 刪hp最小
-                one.Delete_min();
+                bst.Delete_min();
             }
 
             else if (count_3 % 2 == 0) {  // 偶數次 刪hp最大
-                one.Delete_max();
+                bst.Delete_max();
             }
         }
     }
