@@ -210,8 +210,7 @@ class BST {
 
     }
 
-    
-    void PrintTask2(vector<node*>& result, int count) {
+    void PrintTask2(const vector<node*>& result, int count) {
         if (result.empty()) {
             cout << "No record was found in the specified range.\n";
             cout << "Number of visited nodes = " << count << "\n" << endl;
@@ -256,8 +255,58 @@ class BST {
     }
 
 
-    // task 3
-    void Delete() {}
+    // 實際做 task 3 的
+    node* DeleteMin(node* root) {
+        // 先判斷樹是不是空的
+        if (root == nullptr) {
+            return nullptr;
+        }
+
+        if (root->left == nullptr) {
+            node* rightChild = root->right;
+            delete root;
+            return rightChild;
+        }
+        // 回傳刪掉的
+        root->left = DeleteMin(root->left);
+        return root;
+    }
+
+    node* DeleteMax(node* root) {
+        // 先判斷樹是不是空的
+        if (root == nullptr) {
+            return nullptr;
+        }
+
+        if (root->right == nullptr) {
+            node* leftChild = root->left;
+            delete root;
+            return leftChild;
+        }
+        // 回傳刪掉的
+        root->right = DeleteMax(root->right);
+        return root;
+    }
+
+
+    // 用在 main 裡的
+    void Delete_min() {
+        if (root == nullptr) {
+            cout << "\n----- Execute Mission 1 first! -----\n" << endl;
+            return;
+        }
+
+        root = DeleteMin(root);
+    }
+
+    void Delete_max() {
+        if (root == nullptr) {
+            cout << "\n----- Execute Mission 1 first! -----\n" << endl;
+            return;
+        }
+
+        root = DeleteMax(root);
+    }
 };
 
 
@@ -271,6 +320,7 @@ int main () {
     BST one;
     int range1;
     int range2; 
+    int count_3 = 0;
 
     while (1) {
         cout << "*** (^_^) Data Structure (^o^) ***\n";
@@ -314,7 +364,14 @@ int main () {
         }
 
         else if (comm == 3) {
+            count_3++;
+            if (count_3 % 2 == 1) {  // 奇數次 刪hp最小
+                one.Delete_min();
+            }
 
+            else if (count_3 % 2 == 0) {  // 偶數次 刪hp最大
+                one.Delete_max();
+            }
         }
     }
 }
