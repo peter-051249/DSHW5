@@ -1,16 +1,18 @@
+// 11327123 尤祖嫣, 11327126 黃圓譿
 #include <iostream>
 #include <stdbool.h>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <vector>
+#include <iomanip>
 using namespace std;
 
 typedef struct Pokemon {
     int ID;
     string name;
     string type1;
-    string type2;
+    string type2; 
     int total;
     int hp;
     int attack;
@@ -21,7 +23,6 @@ typedef struct Pokemon {
     int gen;
     bool legend;
 } Pokemon;
-
 
 
 typedef struct node {   
@@ -39,7 +40,7 @@ typedef struct node {
     }
 } node;
 
-// 用來建立樹
+
 class BST {
   private:
     vector<Pokemon> status;  // 動態陣列，裡面每一個元素都是一個 struct Pokemon
@@ -112,31 +113,26 @@ class BST {
         for (int i = 0; i < status.size(); i++) {
             root = insertnode(root, status[i].hp, i);
         }
-
-        // 幫忙debug
-        // cout << status.size() << endl;
-        // cout << status[6].name << " " << status[6].hp << " " << status[6].type1 << " " << status[6].type2 << status[6].total << endl;
-        // cout << status[1].name << " " << status[1].hp << endl;
-
+        
         // Print
         int size = status.size(); // status array size
-        cout << titles[0] << "\t"
-             << titles[1] << "\t"
-             << titles[2] << "\t"
-             << titles[5] << "\n";
+        cout << left
+            << "\t" << titles[0] << "\t"
+            << setw(19) << titles[1] << "\t"
+            << setw(10) << titles[2] << "\t"
+            << titles[5] << "\n";
+        // this formatting should be cancelled :)
         for (int i = 0; i < size; i++) {
-            cout << "[" << i + 1 << "]" << "\t";
-            cout << status[i].ID << "\t";
-            cout << status[i].name << "\t";
-            cout << status[i].type1 << "\t";
-            // if (status[i].type2 == "") {  // type2 沒東西，空出一個欄位給他(但排版看起來怪怪的)
-            //     cout << "\t";
-            // }
-            cout << status[i].hp << "\n";
-        }
+            cout << "[" << right << setw(3) << i + 1 << "]\t";
 
+            cout << left
+                << status[i].ID << "\t"
+                << setw(20) << status[i].name << "\t"
+                << setw(10) << status[i].type1 << "\t"
+                << setw(6) << status[i].hp << "\n";
+        }
         int height = getHeight(root);
-        cout << "BST height = " << height << endl;
+        cout << "HP tree height = " << height << "\n" << endl;
 
     }
 
@@ -217,8 +213,12 @@ class BST {
             return;
         }
         
-        // 暫時這樣print
-        cout << "#\tID\tName\tType1\tTotal\tHP\tAttack\tDefense\n";
+        // 暫時這樣print (超級奇怪的空格...)
+        cout << "\t#\t"
+            << left << setw(19) << "Name" << "\t"
+            << left << setw(10) << "Type 1" << "\t"
+            << "Total\tHP\tAttack\tDefense\n";
+
         
         int idx = 1;
         for (int i = result.size() - 1; i >= 0; i--) {
@@ -228,18 +228,19 @@ class BST {
                 int id = n->idxs[j];
                 
                 const Pokemon& p = status[id];
-                
-                cout << "[" << idx++ << "]" << "\t"
-                << p.ID << "\t"
-                << p.name << "\t"
-                << p.type1 << "\t"
-                << p.total << "\t"
-                << p.hp << "\t"
-                << p.attack << "\t"
-                << p.defence << "\n";
+
+                cout << "[" << right << setw(3) << idx++ << "]\t";
+
+                cout << p.ID << "\t"
+                    << left << setw(20) << p.name << "\t"
+                    << setw(10) << p.type1 << "\t"
+                    << setw(5)  << p.total << " \t"
+                    << p.hp << "\t"
+                    << p.attack << "\t"
+                    << p.defence << "\n";
             }
         }
-        cout << "\nNumber of visited nodes = " << count << "\n" << endl;
+        cout << "Number of visited nodes = " << count << "\n" << endl;
     }
 
     // 幫助從 main 使用到 Search (private -> root)
@@ -299,19 +300,25 @@ class BST {
         root = DeleteMin(root, deleted);
 
         if (deleted != nullptr) {
-            cout << "#\tID\tName\tType1\tTotal\tHP\tAttack\tDefense\tSp. Atk\tSp. Def\n";
-            // cout << "Delete HP = " << deleted->hp << endl;  // print the deleted node (for later)
+            cout << "\t#\t"
+                << left << setw(19) << "Name" << "\t"
+                << left << setw(10) << "Type 1" << "\t"
+                << "Total\tHP\tAttack\tDefense\tSp. Atk\tSp. Def\n";
+
+
+            int idx = 1;
             for (int i = 0; i < deleted->idxs.size(); i++) {
                 int id = deleted->idxs[i];   // status 的 index
                 const Pokemon& p = status[id]; 
-                cout << p.ID << "\t"
-                    << p.name << "\t"
-                    << p.type1 << "\t"
-                    << p.total << "\t"
+                cout << "[" << right << setw(3) << idx++ << "]\t"
+                    << p.ID << "\t"
+                    << left << setw(20) << p.name << "\t"
+                    << setw(10) << p.type1 << "\t"
+                    << setw(5)  << p.total << " \t"
                     << p.hp << "\t"
                     << p.attack << "\t"
                     << p.defence << "\t"
-                    << p.sp_atk << "\t"
+                    << setw(6) << p.sp_atk << "\t"
                     << p.sp_def << endl;
             }
 
@@ -319,7 +326,7 @@ class BST {
         }
 
         int height = getHeight(root);
-        cout << "HP tree height = " << height << endl;
+        cout << "HP tree height = " << height << "\n" << endl;
     }
 
     void Delete_max() {
@@ -332,27 +339,31 @@ class BST {
         root = DeleteMax(root, deleted);
 
         if (deleted != nullptr) {
-            cout << "#\tID\tName\tType1\tTotal\tHP\tAttack\tDefense\tSp. Atk\tSp. Def\n";
-            // cout << "Delete HP = " << deleted->hp << endl;  // print the deleted node (for later)
+            cout << "\t#\t"
+                << left << setw(19) << "Name" << "\t"
+                << left << setw(10) << "Type 1" << "\t"
+                << "Total\tHP\tAttack\tDefense\tSp. Atk\tSp. Def\n";
+
+            int idx = 1;
             for (int i = 0; i < deleted->idxs.size(); i++) {
                 int id = deleted->idxs[i];   // status 的 index
                 const Pokemon& p = status[id]; 
-                cout << p.ID << "\t"
-                    << p.name << "\t"
-                    << p.type1 << "\t"
-                    << p.total << "\t"
+                cout << "[" << right << setw(3) << idx++ << "]\t"
+                    << p.ID << "\t"
+                    << left << setw(20) << p.name << "\t"
+                    << setw(10) << p.type1 << "\t"
+                    << setw(5)  << p.total << " \t"
                     << p.hp << "\t"
                     << p.attack << "\t"
                     << p.defence << "\t"
-                    << p.sp_atk << "\t"
+                    << setw(6) << p.sp_atk << "\t"
                     << p.sp_def << endl;
             }
-
             delete deleted;   // 這裡才真的釋放
         }
 
         int height = getHeight(root);
-        cout << "BST height = " << height << endl;
+        cout << "HP tree height = " << height << "\n" << endl;
     }
 };
 
@@ -390,7 +401,6 @@ int main () {
                 continue;
             }
             bst.ReadFile(filenum);
-            cout << "\n";
             comm1 = true;
         }
 
@@ -399,7 +409,7 @@ int main () {
                 cout << "\n----- Execute Mission 1 first! -----\n" << endl;
                 continue;
             }
-            cout << "Input a non-negative integer: ";
+            cout << "\nInput a non-negative integer: ";
             cin >> range1;
             cout << "\nInput a non-negative integer: ";
             cin >> range2;
@@ -414,12 +424,24 @@ int main () {
 
             count_3++;
             if (count_3 % 2 == 1) {  // 奇數次 刪hp最小
+                cout << "\n";
                 bst.Delete_min();
             }
 
             else if (count_3 % 2 == 0) {  // 偶數次 刪hp最大
+                cout << "\n";
                 bst.Delete_max();
             }
+        }
+    
+        else if (comm == 4) {
+            if (!comm1) {
+                cout << "\n----- Execute Mission 1 first! -----\n" << endl;
+                continue;
+            }
+
+
+            
         }
     }
 }
