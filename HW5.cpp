@@ -198,19 +198,16 @@ class BST {
             count++;
             // 左子樹有可能有值
             if (n->hp > left) {
-                // count++;
                 Search(n->left, left, right, result, count);
             }
 
             // 範圍內，存入 result
             if (n->hp >= left && n->hp <= right) {
                 result.push_back(n);
-                // count++;
             }
 
             // 右子樹有可能的職
             if (n->hp <= right) {  // 原本是n->hp < right
-                //count++;
                 Search(n->right, left, right, result, count);
             }
 
@@ -225,7 +222,6 @@ class BST {
             return;
         }
         
-        // 暫時這樣print (超級奇怪的空格...)
         cout << "\t#\t"
             << left << setw(19) << "Name" << "\t"
             << left << setw(10) << "Type 1" << "\t"
@@ -376,6 +372,80 @@ class BST {
         int height = getHeight(root);
         cout << "HP tree height = " << height << "\n" << endl;
     }
+
+
+void Task4() { // main 裡使用
+        vector<node*>t_node;
+        In_order_traval(root, t_node);
+        root = bulid(t_node, 0, t_node.size() - 1);
+        cout << "HP tree:" << endl;
+        Print(root);
+        cout << endl;
+    }
+
+    void In_order_traval(node* root, vector<node*>& t_node) {
+        if (root == nullptr) {
+            return;
+        }
+
+        In_order_traval(root -> left, t_node);
+
+        t_node.push_back(root);
+
+        In_order_traval(root -> right, t_node);
+    }
+
+    node *bulid(vector<node*>& t_node, int left, int right) {  //  建樹...
+        if (left > right) {
+            return nullptr; 
+        }
+        int mid = (left + right) / 2;
+        node *p = t_node[mid];
+        p -> left = bulid(t_node, left, mid - 1);
+        p -> right = bulid(t_node, mid + 1, right);
+
+        return p;
+    }
+
+    void Print(node *root) { 
+        vector<node*> r;
+        r.push_back(root);
+        int level = 1;
+        while (!r.empty()) {
+            cout << "<level " << level << "> ";
+            int s = r.size();  //  本層有多少節點
+            for (int i = 0; i < s; i++) {  //  印hp
+                node *p = r.front();  //  該層最左邊
+                cout << "(" << p ->hp << ", ";
+                
+                for (int j = 0; j < p -> idxs.size();  j++) {
+                    int x = p -> idxs[j];
+                    cout << status[x].ID;
+                    if (j < p -> idxs.size() - 1) {
+                        cout << "|";
+                    }
+                }
+
+                cout << ") ";
+                if (p -> left != nullptr) {
+                    r.push_back(p -> left);
+                }
+
+                if (p -> right != nullptr) {
+                    r.push_back(p -> right);
+                }
+                r.erase(r.begin());  //  刪掉第一個元素
+            }
+            level++;
+            cout << endl;
+        }
+    }
+
+
+
+
+
+
 };
 
 int main () {
@@ -420,10 +490,40 @@ int main () {
                 cout << "\n----- Execute Mission 1 first! -----\n" << endl;
                 continue;
             }
-            cout << "\nInput a non-negative integer: ";
-            cin >> range1;
-            cout << "\nInput a non-negative integer: ";
-            cin >> range2;
+
+            int maxhp = bst.getMaxHP();
+            int limit = maxhp * 2;
+            while (1) {
+                cout << "\nInput a non-negative integer: ";
+                cin >> range1;
+                if (range1 > limit) {
+                    cout << "\n### It is NOT in [0," << limit <<  "]. ###\n";
+                    cout << "Try again:\n";
+                    cout << "Input a non-negative integer: ";
+                    cin >> range1;
+                    cout << "\n";
+                }
+
+                else {
+                    break;
+                }
+            }
+            cout << "\n";
+            while (1) {
+                cout << "Input a non-negative integer: ";
+                cin >> range2;
+                if (range2 > limit) {
+                    cout << "### It is NOT in [0," << limit <<  "]. ###\n";
+                    cout << "Try again:\n";
+                    cout << "Input a non-negative integer: ";
+                    cin >> range2;
+                    cout << "\n";
+                }
+
+                else {
+                    break;
+                }
+            }
 
             if (range1 > range2) {
                 int temp;
@@ -432,9 +532,7 @@ int main () {
                 range2 = temp;
             }
 
-            if (range1 > bst.getMaxHP() || range2 > bst.getMaxHP()) {
-                cout << "";
-            }
+
             bst.SearchRange(range1, range2);
         }
 
@@ -461,9 +559,7 @@ int main () {
                 cout << "\n----- Execute Mission 1 first! -----\n" << endl;
                 continue;
             }
-
-
-            
+            bst.Task4();
         }
     }
 }
