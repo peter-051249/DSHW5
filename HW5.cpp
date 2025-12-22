@@ -121,7 +121,7 @@ class BST {
             << setw(19) << titles[1] << "\t"
             << setw(10) << titles[2] << "\t"
             << titles[5] << "\n";
-        // this formatting should be cancelled :)
+        
         for (int i = 0; i < size; i++) {
             cout << "[" << right << setw(3) << i + 1 << "]\t";
 
@@ -138,7 +138,7 @@ class BST {
 
     node* insertnode(node* root, int hp, int id) {
         if (root == nullptr) {
-            return new node(hp, id);  // 建立new noode
+            return new node(hp, id);  // 建立new node
         }
 
         if (hp < root->hp) {
@@ -172,12 +172,24 @@ class BST {
         }
     }
 
+    int MaxHP(node* n) {
+        if (n == nullptr) return 0;
 
+        while (n->right != nullptr) {
+            n = n->right;
+        }
+        return n->hp;
+    }
+
+    int getMaxHP() {
+        return MaxHP(root);
+    }
     // task2 走訪BST，判斷大小，累計次數，收集結果
     // 需要在函式裡被修改，修改後外面要看得到 (&)
     // 指向一個node (*)
     // result 存所有符合條件的節點指標
     void Search(node* n, int left, int right, vector<node*>& result, int& count) {
+        // 找最大的hp，跟left and right比較
         if (n == nullptr) {  // 空樹
             return;
         }
@@ -254,7 +266,6 @@ class BST {
         // 印出結果
         PrintTask2(result, count);
     }
-
 
     // 實際做 task 3 的
     node* DeleteMin(node* root, node*& deleted) {
@@ -413,6 +424,17 @@ int main () {
             cin >> range1;
             cout << "\nInput a non-negative integer: ";
             cin >> range2;
+
+            if (range1 > range2) {
+                int temp;
+                temp = range1;
+                range1 = range2;
+                range2 = temp;
+            }
+
+            if (range1 > bst.getMaxHP() || range2 > bst.getMaxHP()) {
+                cout << "";
+            }
             bst.SearchRange(range1, range2);
         }
 
