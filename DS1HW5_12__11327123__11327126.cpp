@@ -48,11 +48,11 @@ class BST {
 
   public:
     // 讀檔案進 vector<Pokemon>
-    void ReadFile(string filenum) {
+    bool ReadFile(string filenum) {
         ifstream file("input"+ filenum + ".txt");
         if (!file) {
-            cout << "### input" << filenum << ".txt does not exist! ###\n";
-            return;
+            cout << "\n### input" << filenum << ".txt does not exist! ###\n";
+            return false;
         }
 
         status.clear();
@@ -133,26 +133,26 @@ class BST {
         }
         int height = getHeight(root);
         cout << "HP tree height = " << height << "\n" << endl;
-
+        return true;
     }
 
-    node* insertnode(node* root, int hp, int id) {
-        if (root == nullptr) {
+    node* insertnode(node* r, int hp, int id) {
+        if (r == nullptr) {
             return new node(hp, id);  // 建立new node
         }
 
-        if (hp < root->hp) {
-            root->left = insertnode(root->left, hp, id);
+        if (hp < r->hp) {
+            r->left = insertnode(r->left, hp, id);
         }
 
-        else if (hp > root->hp) {
-            root->right = insertnode(root->right, hp, id);
+        else if (hp > r->hp) {
+            r->right = insertnode(r->right, hp, id);
         }
 
         else {  // hp == root->hp
-            root->idxs.push_back(id);
+            r->idxs.push_back(id);
         }
-        return root;
+        return r;
     }
 
     int getHeight(node* root) {
@@ -195,22 +195,23 @@ class BST {
         }
 
         else {
-            count++;
             // 左子樹有可能有值
             if (n->hp > left) {
                 Search(n->left, left, right, result, count);
+                
             }
-
+            
             // 範圍內，存入 result
             if (n->hp >= left && n->hp <= right) {
                 result.push_back(n);
             }
-
+            
             // 右子樹有可能的職
-            if (n->hp <= right) {  // 原本是n->hp < right
+            if (n->hp < right) {  // 原本是n->hp < right
                 Search(n->right, left, right, result, count);
             }
-
+            count++;
+            
         }
 
     }
@@ -374,25 +375,26 @@ class BST {
     }
 
 
-void Task4() { // main 裡使用
+    void Task4() { // main 裡使用
         vector<node*>t_node;
         In_order_traval(root, t_node);
         root = bulid(t_node, 0, t_node.size() - 1);
+        cout << endl;
         cout << "HP tree:" << endl;
         Print(root);
         cout << endl;
     }
 
-    void In_order_traval(node* root, vector<node*>& t_node) {
-        if (root == nullptr) {
+    void In_order_traval(node* r, vector<node*>& t_node) {
+        if (r == nullptr) {
             return;
         }
 
-        In_order_traval(root -> left, t_node);
+        In_order_traval(r -> left, t_node);
 
-        t_node.push_back(root);
+        t_node.push_back(r);
 
-        In_order_traval(root -> right, t_node);
+        In_order_traval(r -> right, t_node);
     }
 
     node *bulid(vector<node*>& t_node, int left, int right) {  //  建樹...
@@ -426,7 +428,10 @@ void Task4() { // main 裡使用
                     }
                 }
 
-                cout << ") ";
+                cout << ")";
+                if (i < s - 1) {
+                    cout << " ";
+                }
                 if (p -> left != nullptr) {
                     r.push_back(p -> left);
                 }
@@ -442,19 +447,39 @@ void Task4() { // main 裡使用
     }
 
 
-
-
-
-
 };
 
+
+int num(string size) {  // 字串變數字
+  int n = size.size();  // 是幾位數? 1~5(最多到99999)
+  int test = 0;  // 不是數字就等於1
+  for (int i = 0; i < n; i++) {
+    if (!isdigit(size[i])) {
+      test = 1;
+      break;
+    }
+  }
+
+  if (test == 0) {  // 都是數字，把他們變成int
+    int num = 0;
+    for (int i = 0; i < n; i++) {
+      num = (num * 10) + size[i] - '0';
+    }
+    return num;
+  }
+  return -1;  // 不是數字
+}
+
+
+
+
 int main () {
-    int comm;
+    string comm;
     bool comm1 = false;
     string filenum;
     BST bst; 
-    int range1;
-    int range2; 
+    string range1;
+    string range2; 
     int count_3 = 0;
 
     while (1) {
@@ -470,54 +495,69 @@ int main () {
 
         cin >> comm;
 
-        if (comm == 0) {
+        if (comm == "0") {
             break; 
         }
 
-        else if (comm == 1) {
-            cout << "\nInput a file number [0: quit]: ";
-            cin >> filenum;
-            if (filenum == "0") {
-                cout << "\n";
-                continue;
+        else if (comm == "1") {
+            while (1) {
+                cout << "\nInput a file number [0: quit]: ";
+                cin >> filenum;
+                if (filenum == "0") {
+                    cout << "\n";
+                    continue;
+                }
+                if (bst.ReadFile(filenum)) {
+                    break;
+                }
             }
-            bst.ReadFile(filenum);
             comm1 = true;
         }
 
-        else if (comm == 2) {
+        else if (comm == "2") {
+            int r1 = 0;
+            int r2 = 0;
             if (!comm1) {
                 cout << "\n----- Execute Mission 1 first! -----\n" << endl;
                 continue;
             }
-
+            cout << endl;
             int maxhp = bst.getMaxHP();
             int limit = maxhp * 2;
             while (1) {
-                cout << "\nInput a non-negative integer: ";
+                cout << "Input a non-negative integer: ";
                 cin >> range1;
-                if (range1 > limit) {
+                r1 = num(range1);
+                if (num(range1) == -1) {
+                    cout << "\n### It is NOT a non-negative integer. ###\n";
+                    cout << "Try again: \n";
+                }
+
+                // range problem
+                else if (r1 > limit) {
                     cout << "\n### It is NOT in [0," << limit <<  "]. ###\n";
-                    cout << "Try again:\n";
-                    cout << "Input a non-negative integer: ";
-                    cin >> range1;
-                    cout << "\n";
+                    cout << "Try again: \n";
                 }
 
                 else {
                     break;
                 }
             }
+
             cout << "\n";
             while (1) {
                 cout << "Input a non-negative integer: ";
                 cin >> range2;
-                if (range2 > limit) {
-                    cout << "### It is NOT in [0," << limit <<  "]. ###\n";
-                    cout << "Try again:\n";
-                    cout << "Input a non-negative integer: ";
-                    cin >> range2;
-                    cout << "\n";
+                r2 = num(range2);
+                if (num(range2) == -1) {
+                    cout << "\n### It is NOT a non-negative integer. ###\n";
+                    cout << "Try again: \n";
+                }
+
+                // range problem
+                else if (r2 > limit) {
+                    cout << "\n### It is NOT in [0," << limit <<  "]. ###\n";
+                    cout << "Try again: \n";
                 }
 
                 else {
@@ -525,18 +565,18 @@ int main () {
                 }
             }
 
-            if (range1 > range2) {
+            if (r1 > r2) {
                 int temp;
-                temp = range1;
-                range1 = range2;
-                range2 = temp;
+                temp = r1;
+                r1 = r2;
+                r2 = temp;
             }
 
 
-            bst.SearchRange(range1, range2);
+            bst.SearchRange(r1, r2);
         }
 
-        else if (comm == 3) {
+        else if (comm == "3") {
             if (!comm1) {
                 cout << "\n----- Execute Mission 1 first! -----\n" << endl;
                 continue;
@@ -554,12 +594,17 @@ int main () {
             }
         }
     
-        else if (comm == 4) {
+        else if (comm == "4") {
             if (!comm1) {
                 cout << "\n----- Execute Mission 1 first! -----\n" << endl;
                 continue;
             }
             bst.Task4();
+            count_3 = 0;
+        }
+
+        else {
+            cout << "\nCommand does not exist!\n" << endl;
         }
     }
 }

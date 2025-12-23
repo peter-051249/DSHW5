@@ -1,0 +1,1 @@
+// 找最大的hp，跟left and right比較
