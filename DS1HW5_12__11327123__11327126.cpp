@@ -50,6 +50,7 @@ class BST {
     // 讀檔案進 vector<Pokemon>
     bool ReadFile(string filenum) {
         ifstream file("input"+ filenum + ".txt");
+        
         if (!file) {
             cout << "\n### input" << filenum << ".txt does not exist! ###\n";
             return false;
@@ -265,7 +266,7 @@ class BST {
     }
 
     // 實際做 task 3 的
-    node* DeleteMin(node* root, node*& deleted) {
+    node* DeleteMin(node* root, node* &deleted) {
         if (root == nullptr) {
             deleted = nullptr;
             return nullptr;
@@ -281,14 +282,14 @@ class BST {
     }
 
 
-    node* DeleteMax(node* root, node*& deleted) {
+    node* DeleteMax(node* root, node* &deleted) {
         // 先判斷樹是不是空的
         if (root == nullptr) {
             deleted = nullptr;
             return nullptr;
         }
 
-        if (root->right == nullptr) {
+        if (root->right == nullptr) { 
             deleted = root;
             return root->left;
         }
@@ -492,7 +493,6 @@ int main () {
         cout << "* 4. Rebuild the balanced HP BST *\n";
         cout << "**********************************\n";
         cout << "Input a choice(0, 1, 2, 3, 4): ";  
-
         cin >> comm;
 
         if (comm == "0") {
@@ -505,7 +505,7 @@ int main () {
                 cin >> filenum;
                 if (filenum == "0") {
                     cout << "\n";
-                    continue;
+                    break;
                 }
                 if (bst.ReadFile(filenum)) {
                     break;
